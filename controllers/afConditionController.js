@@ -3,8 +3,8 @@ const { afcondition } = require('../models');
 // Membuat kondisi baru
 exports.createafcondition = async (req, res) => {
   try {
-    const { condition_code, description, cf } = req.body;
-    const newCondition = await afcondition.create({ condition_code, description, cf });
+    const { condition_code, category, description, cf } = req.body;
+    const newCondition = await afcondition.create({ condition_code, category, description, cf });
     res.status(201).json(newCondition);
   } catch (error) {
     console.error('Error creating afcondition:', error);
@@ -41,11 +41,25 @@ exports.updateafcondition = async (req, res) => {
   try {
     const { id } = req.params;
     const { condition_code, description, cf } = req.body;
+
+    // Temukan entri afcondition berdasarkan ID
     const condition = await afcondition.findByPk(id);
-    if (!condition) return res.status(404).json({ message: 'afcondition not found' });
-    condition.condition_code = condition_code;
-    condition.description = description;
-    condition.cf = cf;
+    if (!condition) {
+      return res.status(404).json({ message: 'afcondition not found' });
+    }
+
+    // Hanya perbarui kolom yang ada di req.body
+    if (condition_code !== undefined) {
+      condition.condition_code = condition_code;
+    }
+    if (description !== undefined) {
+      condition.description = description;
+    }
+    if (cf !== undefined) {
+      condition.cf = cf;
+    }
+
+    // Simpan perubahan
     await condition.save();
     res.status(200).json(condition);
   } catch (error) {
@@ -53,6 +67,7 @@ exports.updateafcondition = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
 
 // Menghapus kondisi
 exports.deleteafcondition = async (req, res) => {

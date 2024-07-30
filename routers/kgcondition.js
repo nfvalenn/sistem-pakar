@@ -1,12 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const KGConditionController = require('../controllers/kgConditionController');
+const kgconditionController = require('../controllers/kgconditionController');
 
-// Route untuk mengelola KGCondition
-router.post('/kg-condition', KGConditionController.createkgcondition);
-router.get('kg-condition', KGConditionController.getAllkgconditions);
-router.get('kg-condition:id', KGConditionController.getkgconditionById);
-router.put('/kg-condition:id', KGConditionController.updatekgcondition);
-router.delete('/kg-condition:id', KGConditionController.deletekgcondition);
+router.post('/', kgconditionController.createkgcondition);
+router.get('/', kgconditionController.getAllkgconditions);
+router.get('/:id', kgconditionController.getkgconditionById);
+router.put('/:id', kgconditionController.updatekgcondition);
+router.delete('/:id', kgconditionController.deletekgcondition);
 
 module.exports = router;

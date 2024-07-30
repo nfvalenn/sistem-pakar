@@ -1,12 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const HConditionController = require('../controllers/hConditionController');
+const hconditionController = require('../controllers/hconditionController');
 
-// Route untuk mengelola HCondition
-router.post('/h-condition', HConditionController.createhcondition);
-router.get('/h-condition', HConditionController.getAllhconditions);
-router.get('/h-condition:id', HConditionController.gethconditionById);
-router.put('/h-condition:id', HConditionController.updatehcondition);
-router.delete('/h-condition:id', HConditionController.updatehcondition);
+router.post('/', hconditionController.createhcondition);
+router.get('/', hconditionController.getAllhconditions);
+router.get('/:id', hconditionController.gethconditionById);
+router.put('/:id', hconditionController.updatehcondition);
+router.delete('/:id', hconditionController.deletehcondition);
 
 module.exports = router;

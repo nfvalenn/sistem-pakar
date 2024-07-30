@@ -18,7 +18,6 @@ exports.createResult = async (req, res) => {
       res.status(500).json({ message: 'Internal server error' });
     }
   };
-  
 
 // Memperbarui hasil yang ada
 exports.updateresult = async (req, res) => {
@@ -27,24 +26,26 @@ exports.updateresult = async (req, res) => {
     const { code, category, calorie_range, description } = req.body;
 
     // Mencari hasil berdasarkan ID
-    const result = await result.findByPk(id);
-    if (!result) {
-      return res.status(404).json({ message: 'result not found' });
+    const foundResult = await result.findByPk(id);
+    if (!foundResult) {
+      return res.status(404).json({ message: 'Result not found' });
     }
 
-    // Memperbarui data hasil
-    result.code = code;
-    result.category = category;
-    result.calorie_range = calorie_range;
-    result.description = description;
-    await result.save();
+    // Memperbarui data hasil secara opsional
+    if (code !== undefined) foundResult.code = code;
+    if (category !== undefined) foundResult.category = category;
+    if (calorie_range !== undefined) foundResult.calorie_range = calorie_range;
+    if (description !== undefined) foundResult.description = description;
+    
+    await foundResult.save();
 
-    res.status(200).json(result);
+    res.status(200).json(foundResult);
   } catch (error) {
     console.error('Error updating result:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
 
 // Mendapatkan semua hasil
 exports.getAllresults = async (req, res) => {
@@ -61,9 +62,11 @@ exports.getAllresults = async (req, res) => {
 exports.getresultById = async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await result.findByPk(id);
-    if (!result) return res.status(404).json({ message: 'result not found' });
-    res.status(200).json(result);
+    const foundResult = await result.findByPk(id);
+    if (!foundResult) {
+      return res.status(404).json({ message: 'Result not found' });
+    }
+    res.status(200).json(foundResult);
   } catch (error) {
     console.error('Error fetching result:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -74,10 +77,12 @@ exports.getresultById = async (req, res) => {
 exports.deleteresult = async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await result.findByPk(id);
-    if (!result) return res.status(404).json({ message: 'result not found' });
-    await result.destroy();
-    res.status(204).send();
+    const foundResult = await result.findByPk(id);
+    if (!foundResult) {
+      return res.status(404).json({ message: 'Result not found' });
+    }
+    await foundResult.destroy();
+    res.status(204).send({ message: "deleted succesfully" });
   } catch (error) {
     console.error('Error deleting result:', error);
     res.status(500).json({ message: 'Internal server error' });

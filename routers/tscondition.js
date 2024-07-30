@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const TSConditionController = require('../controllers/tsConditionController');
+const tsconditionController = require('../controllers/tsconditionController');
 
-// Route untuk mengelola TSCondition
-router.post('/ts-condition', TSConditionController.createtscondition);
-router.get('/ts-condition', TSConditionController.getAlltsconditions);
-router.put('/ts-condition:id', TSConditionController.updatetscondition);
-router.delete('/ts-condition:id', TSConditionController.deletetscondition);
+router.post('/', tsconditionController.createtscondition);
+router.get('/', tsconditionController.getAlltsconditions);
+router.get('/:id', tsconditionController.gettsconditionById);
+router.put('/:id', tsconditionController.updatetscondition);
+router.delete('/:id', tsconditionController.deletetscondition);
 
 module.exports = router;

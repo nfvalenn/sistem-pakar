@@ -2,13 +2,10 @@ const express = require('express');
 const router = express.Router();
 const consultationController = require('../controllers/consultationController');
 
-// Rute untuk membuat konsultasi baru
-router.post('/consultations', consultationController.createconsultation);
-
-// Rute untuk mendapatkan semua konsultasi
-// router.get('/consultations', consultationController.getAllConsultations);
-
-// // Rute untuk mendapatkan konsultasi berdasarkan ID
-// router.get('/consultations/:id', consultationController.getConsultationById);
+router.post('/consultations', consultationController.create);
+// router.get('/consultations', consultationController.getAll);
+// router.get('/consultations/:id', consultationController.getById);
+// router.put('/consultations/:id', consultationController.update);
+// router.delete('/consultations/:id', consultationController.delete);
 
 module.exports = router;

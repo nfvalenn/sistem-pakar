@@ -1,79 +1,139 @@
-const { icondition } = require('../models');
+const db = require('../models');
+const ICondition = db.icondition;
 
-// Membuat kondisi baru
-exports.createicondition = async (req, res) => {
+// Create and Save a new ICondition
+exports.create = async (req, res) => {
   try {
-    const { condition_code, description, cf } = req.body;
-    const newCondition = await icondition.create({ condition_code, description, cf });
-    res.status(201).json(newCondition);
-  } catch (error) {
-    console.error('Error creating icondition:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-};
-
-// Mendapatkan semua kondisi
-exports.getAlliconditions = async (req, res) => {
-  try {
-    const conditions = await icondition.findAll();
-    res.status(200).json(conditions);
-  } catch (error) {
-    console.error('Error fetching iconditions:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-};
-
-// Mendapatkan kondisi berdasarkan ID
-exports.geticonditionById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const condition = await icondition.findByPk(id);
-    if (!condition) return res.status(404).json({ message: 'icondition not found' });
-    res.status(200).json(condition);
-  } catch (error) {
-    console.error('Error fetching icondition:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-};
-
-// Memperbarui kondisi
-exports.updateicondition = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { condition_code, description, cf } = req.body;
-    const condition = await icondition.findByPk(id);
-
-    if (!condition) return res.status(404).json({ message: 'icondition not found' });
-
-    if (condition_code !== undefined) {
-      condition.condition_code = condition_code;
-    }
-    if (description !== undefined) {
-      condition.description = description;
-    }
-    if (cf !== undefined) {
-      condition.cf = cf;
+    if (!req.body.condition_code || !req.body.category) {
+      return res.status(400).send({
+        message: "Condition code and category are required!"
+      });
     }
 
-    await condition.save();
-    res.status(200).json(condition);
-  } catch (error) {
-    console.error('Error updating icondition:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    const iCondition = {
+      condition_code: req.body.condition_code,
+      category: req.body.category,
+      description: req.body.description,
+      cf: req.body.cf
+    };
+
+    const data = await ICondition.create(iCondition);
+    res.send(data);
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || "Some error occurred while creating the ICondition."
+    });
+  }
+};
+
+// Retrieve all IConditions from the database
+exports.findAll = async (req, res) => {
+  try {
+    const data = await ICondition.findAll();
+    res.send(data);
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || "Some error occurred while retrieving IConditions."
+    });
+  }
+};
+
+// Find a single ICondition with an id
+exports.findOne = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const data = await ICondition.findByPk(id);
+    if (data) {
+      res.send(data);
+    } else {
+      res.status(404).send({
+        message: `Cannot find ICondition with id=${id}.`
+      });
+    }
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || "Error retrieving ICondition with id=" + id
+    });
+  }
+};
+
+// Update an ICondition by the id in the request
+exports.update = async (req, res) => {
+  const id = req.params.id;
+  const updateData = req.body;
+
+  try {
+    // Hapus kunci yang tidak ada dalam updateData
+    const filteredUpdateData = Object.keys(updateData).reduce((acc, key) => {
+      if (updateData[key] !== undefined && updateData[key] !== null) {
+        acc[key] = updateData[key];
+      }
+      return acc;
+    }, {});
+
+    // Periksa apakah ada data untuk diperbarui
+    if (Object.keys(filteredUpdateData).length === 0) {
+      return res.status(400).send({
+        message: "No fields to update."
+      });
+    }
+
+    // Update ICondition
+    const [num] = await ICondition.update(filteredUpdateData, {
+      where: { id: id }
+    });
+
+    if (num === 1) {
+      res.send({
+        message: "ICondition was updated successfully."
+      });
+    } else {
+      res.send({
+        message: `Cannot update ICondition with id=${id}. Maybe ICondition was not found or req.body is empty!`
+      });
+    }
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || "Error updating ICondition with id=" + id
+    });
   }
 };
 
 
-// Menghapus kondisi
-exports.deleteicondition = async (req, res) => {
+// Delete an ICondition with the specified id in the request
+exports.delete = async (req, res) => {
+  const id = req.params.id;
   try {
-    const { id } = req.params;
-    const condition = await icondition.findByPk(id);
-    if (!condition) return res.status(404).json({ message: 'icondition not found' });
-    await condition.destroy();
-    res.status(200).json({ message: 'icondition deleted' });
-  } catch (error) {
-    console.error('Error deleting icondition:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    const num = await ICondition.destroy({
+      where: { id: id }
+    });
+    if (num === 1) {
+      res.send({
+        message: "ICondition was deleted successfully!"
+      });
+    } else {
+      res.send({
+        message: `Cannot delete ICondition with id=${id}. Maybe ICondition was not found!`
+      });
+    }
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || "Could not delete ICondition with id=" + id
+    });
+  }
+};
+
+// Delete all IConditions from the database
+exports.deleteAll = async (req, res) => {
+  try {
+    const nums = await ICondition.destroy({
+      where: {},
+      truncate: false
+    });
+    res.send({ message: `${nums} IConditions were deleted successfully!` });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || "Some error occurred while removing all IConditions."
+    });
   }
 };

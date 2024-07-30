@@ -40,21 +40,29 @@ exports.getkgconditionById = async (req, res) => {
 exports.updatekgcondition = async (req, res) => {
   try {
     const { id } = req.params;
-    const { condition_code, description, cf } = req.body;
+    const { condition_code, category, description, cf } = req.body;
+
+    // Cari kondisi berdasarkan ID
     const condition = await kgcondition.findByPk(id);
     if (!condition) return res.status(404).json({ message: 'Condition not found' });
 
-    condition.condition_code = condition_code;
-    condition.description = description;
-    condition.cf = cf;
+    // Perbarui hanya field yang ada di req.body
+    if (condition_code !== undefined) condition.condition_code = condition_code;
+    if (category !== undefined) condition.category = category;
+    if (description !== undefined) condition.description = description;
+    if (cf !== undefined) condition.cf = cf;
+
+    // Simpan perubahan
     await condition.save();
 
+    // Kirim respons dengan data kondisi yang diperbarui
     res.status(200).json(condition);
   } catch (error) {
     console.error('Error updating kgcondition:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
 
 // Menghapus kg-condition
 exports.deletekgcondition = async (req, res) => {
@@ -64,7 +72,7 @@ exports.deletekgcondition = async (req, res) => {
     if (!condition) return res.status(404).json({ message: 'Condition not found' });
 
     await condition.destroy();
-    res.status(204).json();
+    res.status(204).json({ message: 'kadar gula darah berhasil dihapus' });
   } catch (error) {
     console.error('Error deleting kgcondition:', error);
     res.status(500).json({ message: 'Internal server error' });

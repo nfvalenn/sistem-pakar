@@ -40,19 +40,29 @@ exports.gethconditionById = async (req, res) => {
 exports.updatehcondition = async (req, res) => {
   try {
     const { id } = req.params;
-    const { condition_code, description, cf } = req.body;
+    const { condition_code, category, description, cf } = req.body;
+
+    // Cari kondisi berdasarkan ID
     const condition = await hcondition.findByPk(id);
     if (!condition) return res.status(404).json({ message: 'hcondition not found' });
-    condition.condition_code = condition_code;
-    condition.description = description;
-    condition.cf = cf;
+
+    // Hanya memperbarui field yang ada di req.body
+    if (condition_code !== undefined) condition.condition_code = condition_code;
+    if (category !== undefined) condition.category = category;
+    if (description !== undefined) condition.description = description;
+    if (cf !== undefined) condition.cf = cf;
+
+    // Simpan perubahan
     await condition.save();
+
+    // Kirim respons dengan data kondisi yang diperbarui
     res.status(200).json(condition);
   } catch (error) {
     console.error('Error updating hcondition:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
 
 // Menghapus kondisi
 exports.deletehcondition = async (req, res) => {

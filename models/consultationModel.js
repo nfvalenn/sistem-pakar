@@ -1,42 +1,46 @@
 module.exports = (sequelize, Sequelize) => {
-    const Consultation = sequelize.define('Consultation', {
+    const Consultations = sequelize.define('Consultations', {
         weight: {
-          type: Sequelize.FLOAT,
-          allowNull: true,
+          type: Sequelize.FLOAT
         },
         height: {
-          type: Sequelize.FLOAT,
-          allowNull: true,
+          type: Sequelize.FLOAT
         },
         age: {
-          type: Sequelize.INTEGER,
-          allowNull: true,
+          type: Sequelize.INTEGER
         },
         gender: {
-          type: Sequelize.STRING,
-          allowNull: true,
+          type: Sequelize.STRING
+        },
+        imtId: {
+          type: Sequelize.INTEGER
         },
         activityLevelId: {
-          type: Sequelize.FLOAT,
-          allowNull: true,
+          type: Sequelize.INTEGER
         },
         bloodSugarId: {
-          type: Sequelize.FLOAT,
-          allowNull: true,
+          type: Sequelize.INTEGER
         },
         hba1cId: {
-          type: Sequelize.FLOAT,
-          allowNull: true,
+          type: Sequelize.INTEGER
         },
         stressLevelId: {
-          type: Sequelize.FLOAT,
-          allowNull: true,
+          type: Sequelize.INTEGER
         },
         imt: {
-          type: Sequelize.FLOAT,
-          allowNull: true,
-          // Hasil perhitungan BMI
+          type: Sequelize.FLOAT
         },
+        createdAt: {
+          type: Sequelize.DATE,
+          allowNull: false
+        },
+        updatedAt: {
+          type: Sequelize.DATE,
+          allowNull: false
+        },
+        userId: {
+          type: Sequelize.INTEGER
+        }
       });
-      return Consultation;
-};
+      return Consultations
+}

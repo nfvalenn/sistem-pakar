@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const IConditionController = require('../controllers/iConditionController');
+const iConditions = require('../controllers/iConditionController');
 
-// Route untuk mengelola ICondition
-router.post('/create', IConditionController.createicondition);
-router.get('/', IConditionController.getAlliconditions);
-router.get('/:id', IConditionController.geticonditionById);
-router.put('/:id', IConditionController.updateicondition);
-router.delete('/:id', IConditionController.deleteicondition);
+router.post('/', iConditions.create);
+router.get('/', iConditions.findAll);
+router.get('/:id', iConditions.findOne);
+router.put('/:id', iConditions.update);
+router.delete('/:id', iConditions.delete);
+router.delete('/', iConditions.deleteAll);
 
 module.exports = router;
