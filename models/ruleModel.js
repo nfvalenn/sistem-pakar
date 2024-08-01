@@ -28,7 +28,7 @@ module.exports = (sequelize, Sequelize) => {
     },
     result_id: {
       type: Sequelize.INTEGER,
-      references: { model: 'Results', key: 'id' },
+      references: { model: 'results', key: 'id' },
       allowNull: false
     },
     cf: {

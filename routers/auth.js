@@ -1,9 +1,14 @@
 const express = require('express');
+const { register, login, logout } = require('../controllers/authController');
 const router = express.Router();
-const authController = require('../controllers/authController');
 
-router.post('/register', authController.register);
-router.post('/login', authController.login);
-router.post('/logout', authController.logout);
+// Endpoint untuk registrasi pengguna
+router.post('/register', register);
+
+// Endpoint untuk login
+router.post('/login', login);
+
+// Endpoint untuk logout
+router.post('/logout', logout);
 
 module.exports = router;

@@ -13,55 +13,57 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.user = require('./user')(sequelize, Sequelize);
-db.article = require('./articleModel.js')(sequelize, Sequelize);
-db.consultation = require('./consultationModel.js')(sequelize, Sequelize);
-db.rules = require('./ruleModel.js')(sequelize, Sequelize);
-db.icondition = require('./IConditionModel.js')(sequelize, Sequelize);
-db.afcondition = require('./AfConditionModel.js')(sequelize, Sequelize);
-db.hcondition = require('./HConditionModel.js')(sequelize, Sequelize);
-db.kgcondition = require('./KgConditionModel.js')(sequelize, Sequelize);
-db.tscondition = require('./TsCondition.js')(sequelize, Sequelize);
-db.result = require('./resultModel.js')(sequelize, Sequelize);
-db.foodRecomendation = require('./FoodRecommendationModel.js')(sequelize, Sequelize);
+// Import models
+db.User = require('./user')(sequelize, Sequelize);
+db.Article = require('./articleModel')(sequelize, Sequelize);
+db.Consultation = require('./consultationModel')(sequelize, Sequelize);
+db.Rule = require('./ruleModel')(sequelize, Sequelize);
+db.ICondition = require('./IConditionModel')(sequelize, Sequelize);
+db.AfCondition = require('./AfConditionModel')(sequelize, Sequelize);
+db.HCondition = require('./HConditionModel')(sequelize, Sequelize);
+db.KgCondition = require('./KgConditionModel')(sequelize, Sequelize);
+db.TsCondition = require('./TsCondition')(sequelize, Sequelize);
+db.Result = require('./resultModel')(sequelize, Sequelize);
+db.FoodRecommendation = require('./FoodRecommendationModel')(sequelize, Sequelize);
 
-db.user.hasMany(db.article, { foreignKey: 'authorId', as: 'articles' });
-db.article.belongsTo(db.user, { foreignKey: 'authorId', as: 'author' });
+// Define associations
+db.User.hasMany(db.Article, { foreignKey: 'authorId', as: 'articles' });
+db.Article.belongsTo(db.User, { foreignKey: 'authorId', as: 'author' });
 
-db.user.hasMany(db.consultation, { foreignKey: 'userId', as: 'consultations' });
-db.consultation.belongsTo(db.user, { foreignKey: 'userId', as: 'user' });
+db.User.hasMany(db.Consultation, { foreignKey: 'userId', as: 'consultations' });
+db.Consultation.belongsTo(db.User, { foreignKey: 'userId', as: 'user' });
 
-db.rules.belongsTo(db.icondition, { foreignKey: 'i_condition_id', as: 'iCondition' });
-db.rules.belongsTo(db.afcondition, { foreignKey: 'af_condition_id', as: 'afCondition' });
-db.rules.belongsTo(db.kgcondition, { foreignKey: 'kg_condition_id', as: 'kgCondition' });
-db.rules.belongsTo(db.tscondition, { foreignKey: 'ts_condition_id', as: 'tsCondition' });
-db.rules.belongsTo(db.hcondition, { foreignKey: 'h_condition_id', as: 'hCondition' });
+db.Rule.belongsTo(db.ICondition, { foreignKey: 'i_condition_id', as: 'iCondition' });
+db.Rule.belongsTo(db.AfCondition, { foreignKey: 'af_condition_id', as: 'afCondition' });
+db.Rule.belongsTo(db.KgCondition, { foreignKey: 'kg_condition_id', as: 'kgCondition' });
+db.Rule.belongsTo(db.TsCondition, { foreignKey: 'ts_condition_id', as: 'tsCondition' });
+db.Rule.belongsTo(db.HCondition, { foreignKey: 'h_condition_id', as: 'hCondition' });
 
-db.icondition.hasMany(db.rules, { foreignKey: 'i_condition_id', as: 'ruless' });
-db.afcondition.hasMany(db.rules, { foreignKey: 'af_condition_id', as: 'ruless' });
-db.kgcondition.hasMany(db.rules, { foreignKey: 'kg_condition_id', as: 'ruless' });
-db.tscondition.hasMany(db.rules, { foreignKey: 'ts_condition_id', as: 'ruless' });
-db.hcondition.hasMany(db.rules, { foreignKey: 'h_condition_id', as: 'ruless' });
+db.ICondition.hasMany(db.Rule, { foreignKey: 'i_condition_id', as: 'rules' });
+db.AfCondition.hasMany(db.Rule, { foreignKey: 'af_condition_id', as: 'rules' });
+db.KgCondition.hasMany(db.Rule, { foreignKey: 'kg_condition_id', as: 'rules' });
+db.TsCondition.hasMany(db.Rule, { foreignKey: 'ts_condition_id', as: 'rules' });
+db.HCondition.hasMany(db.Rule, { foreignKey: 'h_condition_id', as: 'rules' });
 
-db.foodRecomendation.belongsTo(db.result, { foreignKey: 'result_id', as: 'result' });
-db.result.hasMany(db.foodRecomendation, { foreignKey: 'result_id', as: 'foodRecommendations' });
+db.FoodRecommendation.belongsTo(db.Result, { foreignKey: 'result_id', as: 'result' });
+db.Result.hasMany(db.FoodRecommendation, { foreignKey: 'result_id', as: 'foodRecommendations' });
 
-db.consultation.belongsTo(db.afcondition, { foreignKey: 'activityLevelId' });
-db.consultation.belongsTo(db.kgcondition, { foreignKey: 'bloodSugarId' });
-db.consultation.belongsTo(db.hcondition, { foreignKey: 'hba1cId' });
-db.consultation.belongsTo(db.tscondition, { foreignKey: 'stressLevelId' });
-db.consultation.belongsTo(db.icondition, { foreignKey: 'imtId' });
+db.Consultation.belongsTo(db.AfCondition, { foreignKey: 'activityLevelId' });
+db.Consultation.belongsTo(db.KgCondition, { foreignKey: 'bloodSugarId' });
+db.Consultation.belongsTo(db.HCondition, { foreignKey: 'hba1cId' });
+db.Consultation.belongsTo(db.TsCondition, { foreignKey: 'stressLevelId' });
+db.Consultation.belongsTo(db.ICondition, { foreignKey: 'imtId' });
 
-db.afcondition.hasMany(db.consultation, { foreignKey: 'activityLevelId' });
-db.kgcondition.hasMany(db.consultation, { foreignKey: 'bloodSugarId' });
-db.hcondition.hasMany(db.consultation, { foreignKey: 'hba1cId' });
-db.tscondition.hasMany(db.consultation, { foreignKey: 'stressLevelId' });
-db.icondition.hasMany(db.consultation, { foreignKey: 'imtId' });
-db.user.hasMany(db.consultation, { foreignKey: 'userId' });
+db.AfCondition.hasMany(db.Consultation, { foreignKey: 'activityLevelId' });
+db.KgCondition.hasMany(db.Consultation, { foreignKey: 'bloodSugarId' });
+db.HCondition.hasMany(db.Consultation, { foreignKey: 'hba1cId' });
+db.TsCondition.hasMany(db.Consultation, { foreignKey: 'stressLevelId' });
+db.ICondition.hasMany(db.Consultation, { foreignKey: 'imtId' });
 
-db.rules.belongsTo(db.result, { foreignKey: 'result_id', as: 'result' });
-db.result.hasMany(db.rules, { foreignKey: 'result_id', as: 'rules' });
+db.Rule.belongsTo(db.Result, { foreignKey: 'result_id', as: 'result' });
+db.Result.hasMany(db.Rule, { foreignKey: 'result_id', as: 'rules' });
 
+// Sync database
 db.sequelize.sync({ alter: true })
   .then(() => {
     console.log('Basis data berhasil disinkronkan');
