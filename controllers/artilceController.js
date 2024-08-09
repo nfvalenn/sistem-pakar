@@ -1,24 +1,35 @@
 const db = require('../models');
-const Article = db.article;
-
+const Article = db.Article;
+const User = db.User;
 
 const createArticle = async (req, res) => {
   try {
     const { title, content, authorId } = req.body;
-    const imageUrl = req.file ? req.file.path : null;
+    const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
 
     // Log untuk debugging
     console.log('Request Body:', req.body);
     console.log('File:', req.file);
 
     // Validasi input
-    if (!title || !content || !authorId) {
-      return res.status(400).json({ message: "Title, content, and authorId cannot be null" });
+    if (!title || !content) {
+      return res.status(400).json({ message: "Title and content cannot be null" });
     }
 
-    const newArticle = await Article.create({ title, content, authorId, imageUrl });
+    // Dapatkan ID admin default jika authorId tidak disediakan
+    let adminId = authorId;
+    if (!authorId) {
+      const admin = await User.findOne({ where: { role: 'admin' } });
+      if (!admin) {
+        return res.status(500).json({ message: "Admin user not found" });
+      }
+      adminId = admin.id;
+    }
+
+    const newArticle = await Article.create({ title, content, authorId: adminId, imageUrl });
     res.status(201).json(newArticle);
   } catch (error) {
+    console.error('Error creating article:', error);  // Log untuk debugging
     res.status(500).json({ message: error.message });
   }
 };
@@ -50,20 +61,24 @@ const getArticleById = async (req, res) => {
 const updateArticle = async (req, res) => {
   try {
     const { title, content, authorId } = req.body;
-    const imageUrl = req.file ? req.file.path : null;
-    const updatedArticle = await Article.update(
+    const imageUrl = req.file ? `/uploads/${req.file.filename}` : null; // Adjust path as needed
+    const [updated] = await Article.update(
       { title, content, authorId, imageUrl },
       { where: { id: req.params.id } }
     );
-    if (updatedArticle[0] === 1) {
-      res.status(200).json({ message: "Article updated successfully" });
+
+    if (updated) {
+      const updatedArticle = await Article.findOne({ where: { id: req.params.id } });
+      res.status(200).json(updatedArticle);
     } else {
-      res.status(404).json({ message: "Article not found" });
+      res.status(404).json({ message: 'Article not found' });
     }
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
+
 
 const deleteArticle = async (req, res) => {
   try {

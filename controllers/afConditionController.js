@@ -1,51 +1,51 @@
-const { afcondition } = require('../models');
+const { AfCondition } = require('../models');
 
 // Membuat kondisi baru
-exports.createafcondition = async (req, res) => {
+exports.createAfCondition = async (req, res) => {
   try {
     const { condition_code, category, description, cf } = req.body;
-    const newCondition = await afcondition.create({ condition_code, category, description, cf });
+    const newCondition = await AfCondition.create({ condition_code, category, description, cf });
     res.status(201).json(newCondition);
   } catch (error) {
-    console.error('Error creating afcondition:', error);
+    console.error('Error creating AfCondition:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
 
 // Mendapatkan semua kondisi
-exports.getAllafconditions = async (req, res) => {
+exports.getAllAfConditions = async (req, res) => {
   try {
-    const conditions = await afcondition.findAll();
+    const conditions = await AfCondition.findAll();
     res.status(200).json(conditions);
   } catch (error) {
-    console.error('Error fetching afconditions:', error);
+    console.error('Error fetching AfConditions:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
 
 // Mendapatkan kondisi berdasarkan ID
-exports.getafconditionById = async (req, res) => {
+exports.getAfConditionById = async (req, res) => {
   try {
     const { id } = req.params;
-    const condition = await afcondition.findByPk(id);
-    if (!condition) return res.status(404).json({ message: 'afcondition not found' });
+    const condition = await AfCondition.findByPk(id);
+    if (!condition) return res.status(404).json({ message: 'AfCondition not found' });
     res.status(200).json(condition);
   } catch (error) {
-    console.error('Error fetching afcondition:', error);
+    console.error('Error fetching AfCondition:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
 
 // Memperbarui kondisi
-exports.updateafcondition = async (req, res) => {
+exports.updateAfCondition = async (req, res) => {
   try {
     const { id } = req.params;
     const { condition_code, description, cf } = req.body;
 
-    // Temukan entri afcondition berdasarkan ID
-    const condition = await afcondition.findByPk(id);
+    // Temukan entri AfCondition berdasarkan ID
+    const condition = await AfCondition.findByPk(id);
     if (!condition) {
-      return res.status(404).json({ message: 'afcondition not found' });
+      return res.status(404).json({ message: 'AfCondition not found' });
     }
 
     // Hanya perbarui kolom yang ada di req.body
@@ -63,22 +63,22 @@ exports.updateafcondition = async (req, res) => {
     await condition.save();
     res.status(200).json(condition);
   } catch (error) {
-    console.error('Error updating afcondition:', error);
+    console.error('Error updating AfCondition:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
 
 
 // Menghapus kondisi
-exports.deleteafcondition = async (req, res) => {
+exports.deleteAfCondition = async (req, res) => {
   try {
     const { id } = req.params;
-    const condition = await afcondition.findByPk(id);
-    if (!condition) return res.status(404).json({ message: 'afcondition not found' });
+    const condition = await AfCondition.findByPk(id);
+    if (!condition) return res.status(404).json({ message: 'AfCondition not found' });
     await condition.destroy();
-    res.status(200).json({ message: 'afcondition deleted' });
+    res.status(200).json({ message: 'AfCondition deleted' });
   } catch (error) {
-    console.error('Error deleting afcondition:', error);
+    console.error('Error deleting AfCondition:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };

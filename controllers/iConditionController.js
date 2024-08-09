@@ -1,5 +1,5 @@
 const db = require('../models');
-const ICondition = db.icondition;
+const ICondition = db.ICondition;
 
 // Create and Save a new ICondition
 exports.create = async (req, res) => {
@@ -32,11 +32,13 @@ exports.findAll = async (req, res) => {
     const data = await ICondition.findAll();
     res.send(data);
   } catch (err) {
+    console.error('Error fetching IConditions:', err); // Logging error for debugging
     res.status(500).send({
       message: err.message || "Some error occurred while retrieving IConditions."
     });
   }
 };
+
 
 // Find a single ICondition with an id
 exports.findOne = async (req, res) => {

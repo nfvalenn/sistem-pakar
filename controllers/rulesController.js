@@ -1,66 +1,79 @@
-const db = require('../models');
+const { Rule } = require('../models');
 
-const createrules = async (req, res) => {
+const createRule = async (req, res) => {
   try {
-    const rules = await db.rules.create({
+    const rule = await Rule.create({
       i_condition_id: req.body.i_condition_id,
       af_condition_id: req.body.af_condition_id,
       kg_condition_id: req.body.kg_condition_id,
       ts_condition_id: req.body.ts_condition_id,
       h_condition_id: req.body.h_condition_id,
       result_id: req.body.result_id,
-      cf: req.body.cf
+      cf: req.body.cf,
     });
-    res.status(201).json(rules);
+    res.status(201).json(rule);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
-const getAllruless = async (req, res) => {
+const getAllRules = async (req, res) => {
   try {
-    const ruless = await db.rules.findAll();
-    res.status(200).json(ruless);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    const { count, rows } = await Rule.findAndCountAll({
+      limit: limit,
+      offset: offset,
+    });
+
+    res.status(200).json({
+      total: count,
+      page: page,
+      totalPages: Math.ceil(count / limit),
+      rules: rows,
+    });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
-const getrulesById = async (req, res) => {
+const getRuleById = async (req, res) => {
   try {
-    const rules = await db.rules.findByPk(req.params.id);
-    if (rules) {
-      res.status(200).json(rules);
+    const rule = await Rule.findByPk(req.params.id);
+    if (rule) {
+      res.status(200).json(rule);
     } else {
-      res.status(404).json({ error: 'rules not found' });
+      res.status(404).json({ error: 'Rule not found' });
     }
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
-const updaterules = async (req, res) => {
+const updateRule = async (req, res) => {
   try {
-    const rules = await db.rules.findByPk(req.params.id);
-    if (rules) {
-      await rules.update(req.body);
-      res.status(200).json(rules);
+    const rule = await Rule.findByPk(req.params.id);
+    if (rule) {
+      await rule.update(req.body);
+      res.status(200).json(rule);
     } else {
-      res.status(404).json({ error: 'rules not found' });
+      res.status(404).json({ error: 'Rule not found' });
     }
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
-const deleterules = async (req, res) => {
+const deleteRule = async (req, res) => {
   try {
-    const rules = await db.rules.findByPk(req.params.id);
-    if (rules) {
-      await rules.destroy();
+    const rule = await Rule.findByPk(req.params.id);
+    if (rule) {
+      await rule.destroy();
       res.status(204).json();
     } else {
-      res.status(404).json({ error: 'rules not found' });
+      res.status(404).json({ error: 'Rule not found' });
     }
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -68,9 +81,9 @@ const deleterules = async (req, res) => {
 };
 
 module.exports = {
-  createrules,
-  getAllruless,
-  getrulesById,
-  updaterules,
-  deleterules
+  createRule,
+  getAllRules,
+  getRuleById,
+  updateRule,
+  deleteRule,
 };

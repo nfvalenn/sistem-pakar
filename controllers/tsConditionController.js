@@ -1,32 +1,32 @@
-const { tscondition } = require('../models');
+const { TsCondition } = require('../models');
 
 // Membuat kondisi baru
-exports.createtscondition = async (req, res) => {
+exports.createTsCondition = async (req, res) => {
   try {
     const { condition_code, category, description, cf } = req.body;
-    const newCondition = await tscondition.create({ condition_code, category, description, cf });
+    const newCondition = await TsCondition.create({ condition_code, category, description, cf });
     res.status(201).json(newCondition);
   } catch (error) {
-    console.error('Error creating tscondition:', error);
+    console.error('Error creating TsCondition:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
 
 // Mendapatkan semua kondisi
-exports.getAlltsconditions = async (req, res) => {
+exports.getAllTsConditions = async (req, res) => {
   try {
-    const conditions = await tscondition.findAll();
+    const conditions = await TsCondition.findAll();
     res.status(200).json(conditions);
   } catch (error) {
-    console.error('Error fetching tsconditions:', error);
+    console.error('Error fetching TsConditions:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
 
 // Mendapatkan kondisi berdasarkan ID
-// Mengambil tscondition berdasarkan ID
+// Mengambil TsCondition berdasarkan ID
 // Mendapatkan kondisi berdasarkan ID
-exports.gettsconditionById = async (req, res) => {
+exports.getTsConditionById = async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -36,32 +36,32 @@ exports.gettsconditionById = async (req, res) => {
     }
 
     // Cari kondisi berdasarkan ID
-    const condition = await tscondition.findByPk(id);
+    const condition = await TsCondition.findByPk(id);
 
     // Cek apakah kondisi ditemukan
     if (!condition) {
-      return res.status(404).json({ message: `tscondition with id ${id} not found` });
+      return res.status(404).json({ message: `TsCondition with id ${id} not found` });
     }
 
     // Kirim respons dengan data kondisi
     res.status(200).json(condition);
   } catch (error) {
     // Tangani error dan kirim respons yang sesuai
-    console.error('Error fetching tscondition:', error);
+    console.error('Error fetching TsCondition:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
 
 
-// Memperbarui tscondition
-exports.updatetscondition = async (req, res) => {
+// Memperbarui TsCondition
+exports.updateTsCondition = async (req, res) => {
   try {
     const { id } = req.params;
     const { condition_code, description, cf } = req.body;
     
     // Cari kondisi berdasarkan ID
-    const condition = await tscondition.findByPk(id);
-    if (!condition) return res.status(404).json({ message: 'tscondition not found' });
+    const condition = await TsCondition.findByPk(id);
+    if (!condition) return res.status(404).json({ message: 'TsCondition not found' });
 
     // Hanya memperbarui field yang ada di req.body
     if (condition_code !== undefined) condition.condition_code = condition_code;
@@ -75,28 +75,28 @@ exports.updatetscondition = async (req, res) => {
     res.status(200).json(condition);
   } catch (error) {
     // Tangani error dan kirim respons yang sesuai
-    console.error('Error updating tscondition:', error);
+    console.error('Error updating TsCondition:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
 
-// Menghapus tscondition
-exports.deletetscondition = async (req, res) => {
+// Menghapus TsCondition
+exports.deleteTsCondition = async (req, res) => {
   try {
     const { id } = req.params;
     
     // Cari kondisi berdasarkan ID
-    const condition = await tscondition.findByPk(id);
-    if (!condition) return res.status(404).json({ message: 'tscondition not found' });
+    const condition = await TsCondition.findByPk(id);
+    if (!condition) return res.status(404).json({ message: 'TsCondition not found' });
 
     // Hapus kondisi
     await condition.destroy();
     
     // Kirim respons dengan pesan sukses
-    res.status(200).json({ message: 'tscondition deleted successfully' });
+    res.status(200).json({ message: 'TsCondition deleted successfully' });
   } catch (error) {
     // Tangani error dan kirim respons yang sesuai
-    console.error('Error deleting tscondition:', error);
+    console.error('Error deleting TsCondition:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };

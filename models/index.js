@@ -33,35 +33,29 @@ db.Article.belongsTo(db.User, { foreignKey: 'authorId', as: 'author' });
 db.User.hasMany(db.Consultation, { foreignKey: 'userId', as: 'consultations' });
 db.Consultation.belongsTo(db.User, { foreignKey: 'userId', as: 'user' });
 
+// Ensure the alias names match
+db.Consultation.belongsTo(db.AfCondition, { foreignKey: 'activityLevelId', as: 'activityLevel' });
+db.Consultation.belongsTo(db.KgCondition, { foreignKey: 'bloodSugarId', as: 'bloodSugar' });
+db.Consultation.belongsTo(db.HCondition, { foreignKey: 'hba1cId', as: 'hba1c' });
+db.Consultation.belongsTo(db.TsCondition, { foreignKey: 'stressLevelId', as: 'stressLevel' });
+db.Consultation.belongsTo(db.ICondition, { foreignKey: 'imtId', as: 'iCondition' });
+
+db.AfCondition.hasMany(db.Consultation, { foreignKey: 'activityLevelId', as: 'consultations' });
+db.KgCondition.hasMany(db.Consultation, { foreignKey: 'bloodSugarId', as: 'consultations' });
+db.HCondition.hasMany(db.Consultation, { foreignKey: 'hba1cId', as: 'consultations' });
+db.TsCondition.hasMany(db.Consultation, { foreignKey: 'stressLevelId', as: 'consultations' });
+db.ICondition.hasMany(db.Consultation, { foreignKey: 'imtId', as: 'consultations' });
+
 db.Rule.belongsTo(db.ICondition, { foreignKey: 'i_condition_id', as: 'iCondition' });
 db.Rule.belongsTo(db.AfCondition, { foreignKey: 'af_condition_id', as: 'afCondition' });
 db.Rule.belongsTo(db.KgCondition, { foreignKey: 'kg_condition_id', as: 'kgCondition' });
 db.Rule.belongsTo(db.TsCondition, { foreignKey: 'ts_condition_id', as: 'tsCondition' });
 db.Rule.belongsTo(db.HCondition, { foreignKey: 'h_condition_id', as: 'hCondition' });
+db.Rule.belongsTo(db.Result, { foreignKey: 'result_id', as: 'result' });
 
-db.ICondition.hasMany(db.Rule, { foreignKey: 'i_condition_id', as: 'rules' });
-db.AfCondition.hasMany(db.Rule, { foreignKey: 'af_condition_id', as: 'rules' });
-db.KgCondition.hasMany(db.Rule, { foreignKey: 'kg_condition_id', as: 'rules' });
-db.TsCondition.hasMany(db.Rule, { foreignKey: 'ts_condition_id', as: 'rules' });
-db.HCondition.hasMany(db.Rule, { foreignKey: 'h_condition_id', as: 'rules' });
-
+db.Result.hasMany(db.Rule, { foreignKey: 'result_id', as: 'rules' });
 db.FoodRecommendation.belongsTo(db.Result, { foreignKey: 'result_id', as: 'result' });
 db.Result.hasMany(db.FoodRecommendation, { foreignKey: 'result_id', as: 'foodRecommendations' });
-
-db.Consultation.belongsTo(db.AfCondition, { foreignKey: 'activityLevelId' });
-db.Consultation.belongsTo(db.KgCondition, { foreignKey: 'bloodSugarId' });
-db.Consultation.belongsTo(db.HCondition, { foreignKey: 'hba1cId' });
-db.Consultation.belongsTo(db.TsCondition, { foreignKey: 'stressLevelId' });
-db.Consultation.belongsTo(db.ICondition, { foreignKey: 'imtId' });
-
-db.AfCondition.hasMany(db.Consultation, { foreignKey: 'activityLevelId' });
-db.KgCondition.hasMany(db.Consultation, { foreignKey: 'bloodSugarId' });
-db.HCondition.hasMany(db.Consultation, { foreignKey: 'hba1cId' });
-db.TsCondition.hasMany(db.Consultation, { foreignKey: 'stressLevelId' });
-db.ICondition.hasMany(db.Consultation, { foreignKey: 'imtId' });
-
-db.Rule.belongsTo(db.Result, { foreignKey: 'result_id', as: 'result' });
-db.Result.hasMany(db.Rule, { foreignKey: 'result_id', as: 'rules' });
 
 // Sync database
 db.sequelize.sync({ alter: true })
