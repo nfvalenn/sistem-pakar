@@ -1,15 +1,22 @@
 const express = require('express');
 const router = express.Router();
-const consultationController = require('../controllers/consultationController');
-const authMiddleware = require('../middleware/authMiddleware'); // Sesuaikan path sesuai struktur folder Anda
+const ConsultationController = require('../controllers/consultationController');
+const RiwayatKonsultasi = require('../controllers/riwayatController');
+const authenticate = require('../middleware/authMiddleware'); // Middleware for authentication
+const { get } = require('./rules');
 
+// Route to create a consultation
+router.post('/', authenticate, ConsultationController.create);
 
-router.post('/', consultationController.create);
-// router.get('/consultations', consultationController.getAll);
-// router.get('/consultations/:id', consultationController.getById);
-// router.put('/consultations/:id', consultationController.update);
-// router.delete('/consultations/:id', consultationController.delete);
-router.get('/history', authMiddleware, consultationController.getConsultationHistoryByUser);
-router.get('/:id', authMiddleware, consultationController.getById);
+// Route to get consultation history by user
+router.get('/history', authenticate, ConsultationController.getConsultationHistoryByUser);
+
+// Route to get consultation by ID
+router.get('/:id', authenticate, ConsultationController.getById);
+
+// Route to get all consultations (admin access)
+router.get('/', authenticate, ConsultationController.getAll);
+
+router.get('/user', authenticate, RiwayatKonsultasi.getConsultationHistoryByUser );
 
 module.exports = router;

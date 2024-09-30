@@ -1,25 +1,21 @@
 const jwt = require('jsonwebtoken');
+const { User } = require('../models'); // Adjust the path as necessary
 
-const authMiddleware = (req, res, next) => {
+const authenticateToken = async (req, res, next) => {
     const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
 
-    if (!authHeader) {
-        return res.status(401).json({ message: 'Authorization header missing' });
-    }
+    if (token == null) return res.sendStatus(401);
 
-    const token = authHeader.split(' ')[1];
-    
-    if (!token) {
-        return res.status(401).json({ message: 'Token missing' });
-    }
+    jwt.verify(token, process.env.JWT_SECRET, async (err, user) => {
+        if (err) return res.sendStatus(403);
+        
+        // Find user by id and attach to request object
+        req.user = await User.findByPk(user.id);
+        if (!req.user) return res.sendStatus(404);
 
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded; // Menyimpan informasi user yang terverifikasi ke dalam req
         next();
-    } catch (err) {
-        return res.status(403).json({ message: 'Token tidak valid' });
-    }
+    });
 };
 
-module.exports = authMiddleware;
+module.exports = authenticateToken;

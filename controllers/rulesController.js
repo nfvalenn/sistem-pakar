@@ -1,4 +1,4 @@
-const { Rule } = require('../models');
+const { Rule, ICondition, AfCondition, KgCondition, TsCondition, HCondition, Result } = require('../models');
 
 const createRule = async (req, res) => {
   try {
@@ -26,13 +26,31 @@ const getAllRules = async (req, res) => {
     const { count, rows } = await Rule.findAndCountAll({
       limit: limit,
       offset: offset,
+      include: [
+        { model: ICondition, as: 'iCondition' },
+        { model: AfCondition, as: 'afCondition' },
+        { model: KgCondition, as: 'kgCondition' },
+        { model: TsCondition, as: 'tsCondition' },
+        { model: HCondition, as: 'hCondition' },
+        { model: Result, as: 'result' }, // Include Result model
+      ]
     });
+
+    const formattedRows = rows.map(rule => ({
+      ...rule.toJSON(),
+      i_condition_code: rule.iCondition ? rule.iCondition.code : null,
+      af_condition_code: rule.afCondition ? rule.afCondition.code : null,
+      kg_condition_code: rule.kgCondition ? rule.kgCondition.code : null,
+      ts_condition_code: rule.tsCondition ? rule.tsCondition.code : null,
+      h_condition_code: rule.hCondition ? rule.hCondition.code : null,
+      result_code: rule.result ? rule.result.code : null, // Map result.code
+    }));
 
     res.status(200).json({
       total: count,
       page: page,
       totalPages: Math.ceil(count / limit),
-      rules: rows,
+      rules: formattedRows,
     });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -41,9 +59,26 @@ const getAllRules = async (req, res) => {
 
 const getRuleById = async (req, res) => {
   try {
-    const rule = await Rule.findByPk(req.params.id);
+    const rule = await Rule.findByPk(req.params.id, {
+      include: [
+        { model: ICondition, as: 'iCondition' },
+        { model: AfCondition, as: 'afCondition' },
+        { model: KgCondition, as: 'kgCondition' },
+        { model: TsCondition, as: 'tsCondition' },
+        { model: HCondition, as: 'hCondition' },
+        { model: Result, as: 'result' }, // Include Result model
+      ]
+    });
     if (rule) {
-      res.status(200).json(rule);
+      res.status(200).json({
+        ...rule.toJSON(),
+        i_condition_code: rule.iCondition ? rule.iCondition.code : null,
+        af_condition_code: rule.afCondition ? rule.afCondition.code : null,
+        kg_condition_code: rule.kgCondition ? rule.kgCondition.code : null,
+        ts_condition_code: rule.tsCondition ? rule.tsCondition.code : null,
+        h_condition_code: rule.hCondition ? rule.hCondition.code : null,
+        result_code: rule.result ? rule.result.code : null, // Map result.code
+      });
     } else {
       res.status(404).json({ error: 'Rule not found' });
     }

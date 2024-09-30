@@ -1,24 +1,27 @@
 const express = require('express');
-const { authenticateToken, authorizeRole } = require('../middleware/authMiddleware');
-const { getProfileById, updateProfile, getAllUsers, getUserById, updateUser, deleteUser } = require('../controllers/userController');
 const router = express.Router();
+const authenticateToken = require('../middleware/authMiddleware');
+const userController = require('../controllers/userController');
 
-// Endpoint untuk mendapatkan profil pengguna
-router.get('/profile', authenticateToken, getProfileById);
+// Rute untuk mendapatkan profil pengguna yang terautentikasi
+router.get('/profile', authenticateToken, userController.getProfileById);
 
-// Endpoint untuk mengupdate profil pengguna
-router.put('/profile/:id', authenticateToken, updateProfile);
+// Rute untuk memperbarui profil pengguna
+router.put('/profile', authenticateToken, userController.updateProfile);
 
-// Endpoint untuk mendapatkan semua pengguna (admin only)
-router.get('/', authenticateToken, authorizeRole(['admin']), getAllUsers);
+// Rute untuk mendapatkan semua pengguna (mungkin untuk admin)
+router.get('/', userController.getAllUsers);
 
-// Endpoint untuk mendapatkan pengguna berdasarkan ID (admin only)
-router.get('/:id', authenticateToken, authorizeRole(['admin']), getUserById);
+// Rute untuk mendapatkan pengguna berdasarkan ID
+router.get('/:id', userController.getUserById);
 
-// Endpoint untuk mengupdate pengguna (admin only)
-router.put('/:id', authenticateToken, authorizeRole(['admin']), updateUser);
+// Rute untuk memperbarui pengguna berdasarkan ID
+router.put('/:id', userController.updateUser);
 
-// Endpoint untuk menghapus pengguna (admin only)
-router.delete('/:id', authenticateToken, authorizeRole(['admin']), deleteUser);
+// Rute untuk menghapus pengguna berdasarkan ID
+router.delete('/:id', userController.deleteUser);
+
+// Rute untuk membuat pengguna baru
+router.post('/', userController.createUser);
 
 module.exports = router;

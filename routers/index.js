@@ -1,7 +1,7 @@
 // index.js di folder routers
 
 const articleRoutes = require("./article");
-//const userRoutes = require("./user");
+const userRoutes = require("./user");
 const afConditionRoutes = require("./afcondition");
 const hconditionRoutes = require("./hcondition");
 const tsconditionRoutes = require("./tscondition");
@@ -24,7 +24,7 @@ module.exports = (app) => {
     app.use('/api/results', resultRoutes);
     app.use('/api/foods', foodRoutes);
     app.use('/api', authRoutes);
-    //app.use('/api/users', userRoutes);
+    app.use('/api/users', userRoutes);
     app.use('/api/rules', ruleRoutes);
     app.use('/api/consultations', konsultasiRoutes);
 };
